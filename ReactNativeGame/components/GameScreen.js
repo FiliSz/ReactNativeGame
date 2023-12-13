@@ -17,26 +17,32 @@ function generateRandomNumber(min, max, exclude){
 let minBoundary = 1;
 let maxBoundary = 100;
 
+
 const GameScreen = ({userNumber, onGameOver}) => {
-    const initialGuess = generateRandomNumber(minBoundary, maxBoundary, userNumber);
+    const initialGuess = generateRandomNumber(1, 100, userNumber);
     const [currentGuess, setCurrentGuess] = useState(initialGuess);
     
     const [guessTable, setGuessTable] = useState({
         item: [{ index: 1, value: initialGuess }],
       });
-    const [tableLenght, setTableLenght] = useState([1]);
-
     
+
     const guessTableLength = guessTable.item.length;
 
     useEffect(()=>{
         console.log("Checking for game over...", currentGuess, userNumber);
         if (currentGuess == userNumber) {
             console.log("Game over condition met. Calling onGameOver...");
-            onGameOver();
+            onGameOver(guessTable.item[0].index);
+            
   }
     }, [currentGuess, userNumber, onGameOver]);
 
+    useEffect(() => {
+        minBoundary = 1;
+        maxBoundary = 100;
+      }, []);
+      
     function nextGuessHandler(direction){
         if (
             (direction === 'lower' && currentGuess < userNumber) ||
@@ -58,12 +64,12 @@ const GameScreen = ({userNumber, onGameOver}) => {
             maxBoundary,
             currentGuess
           );
-          console.log(tableLenght);
+          
           setCurrentGuess(newRndNumber);
           setGuessTable((prevGuessValue) => ({
             item: [{ index: guessTableLength + 1, value: newRndNumber }, ...prevGuessValue.item],
           }));
-          console.log(guessTable);
+          console.log(guessTable.item[0].index);
           
     }
         
@@ -80,6 +86,15 @@ const GameScreen = ({userNumber, onGameOver}) => {
             <View style={styles.buttonContainer} >
                 <RoundedButton onPress={nextGuessHandler.bind(this, 'greater')}>Higher</RoundedButton>
             </View>   
+        </View>
+        <View style={styles.firstFlatListStyles}>
+            <View style={styles.firstFlatListContainer}>
+                <Text style={styles.firstFlatListElement}>Round</Text>
+            </View>
+            <View style={styles.firstFlatListContainer}>
+                <Text style={styles.firstFlatListElement}>Value</Text>
+            </View>
+          
         </View>
         <FlatList data={guessTable.item}  renderItem={({ item }) => (
         <View style={styles.flatListStyles}>
@@ -128,6 +143,7 @@ const styles = StyleSheet.create({
     },
     flatListStyles:{
         flexDirection: 'row',
+        marginTop: 10,
     },
     flatListContainer:{
         flexDirection: 'row',
@@ -142,6 +158,27 @@ const styles = StyleSheet.create({
     },
     flatListElement:{
         padding: 10,
+        color: Colors.accent500,
     },
+    firstFlatListElement:{
+        padding: 10,
+        color: Colors.primary500
+        
+    },
+    firstFlatListContainer:{
+        flexDirection: 'row',
+        justifyContent:'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: Colors.primary500,
+        borderRadius: 20,
+        width: '50%',
+        height: 50,
+        backgroundColor: Colors.accent500,
+    },
+    firstFlatListStyles:{
+        flexDirection:'row',
+        marginTop: 15,
+    }
 
 })

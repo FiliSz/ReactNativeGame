@@ -1,62 +1,69 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ImageBackground, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, ImageBackground, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
+import { StatusBar } from 'expo-status-bar';
+import * as SplashScreen from 'expo-splash-screen';
+import Colors from './constans/colors';
+
 import StartGameScreen from './components/StartGameScreen';
 import GameScreen from './components/GameScreen';
-import Colors from './constans/colors';
 import GameIsOver from './components/GameIsOver';
-import {useFonts} from 'expo-font';
-import AppLoading from 'expo-app-loading';
-
+import { useFonts } from 'expo-font';
 
 export default function App() {
   const [userNumber, setUserNumber] = useState();
   const [gameIsOver, setGameIsOver] = useState(true);
+  const [guessRounds, setGuessRounds] = useState(0);
 
-  const [fontsLoading] = useFonts({
-    'open-sans' : require('./assets/fonts/OpenSans-Regular.ttf'),
-    'open-sans-bold' : require('./assets/fonts/OpenSans-Bold.ttf')
-
+  const [fontsLoaded] = useFonts({
+    'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+    'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf'),
   });
 
-  if(!fontsLoading){
-    return <AppLoading/>
-  }
+  useEffect(() => {
+    SplashScreen.preventAutoHideAsync().then(() => {
+      if (fontsLoaded) {
+        SplashScreen.hideAsync();
+      }
+    });
+  }, [fontsLoaded]);
 
-  function pickedNumberHandler(pickedNumber){
+  function pickedNumberHandler(pickedNumber) {
     setUserNumber(pickedNumber);
     setGameIsOver(false);
   }
 
-  function gameOverHandler(){
+  function gameOverHandler(numberOfRounds) {
     setGameIsOver(true);
+    setGuessRounds(numberOfRounds)
   }
 
-  let screen = <StartGameScreen onPickNumber={pickedNumberHandler}/>;
+  function startNewGameHandler() {
+    setUserNumber(null);
+    setGuessRounds(0);
+  }
 
-  if(userNumber){
+  let screen = <StartGameScreen onPickNumber={pickedNumberHandler} />;
+
+  if (userNumber) {
     screen = <GameScreen userNumber={userNumber} onGameOver={gameOverHandler}/>;
   }
 
-  if(gameIsOver && userNumber){
-    screen = <GameIsOver/>
+  if (gameIsOver && userNumber) {
+    screen = <GameIsOver numberOfRounds={guessRounds} newGameHandler={startNewGameHandler} />;
   }
 
   return (
-    <LinearGradient 
-     colors={[ Colors.primary500, Colors.accent500]}
-     style={styles.container}>
+    <LinearGradient colors={[Colors.primary500, Colors.accent500]} style={styles.container}>
       <ImageBackground
-       source={require('./assets/background.png')}
-       resizeMode="cover"
-       style={styles.container}
-       imageStyle={styles.backgroundOpacity}>
-        
+        source={require('./assets/background.png')}
+        resizeMode="cover"
+        style={styles.container}
+        imageStyle={styles.backgroundOpacity}
+      >
         <SafeAreaView style={styles.container}>{screen}</SafeAreaView>
-      
+        <StatusBar style="light" />
       </ImageBackground>
-
     </LinearGradient>
   );
 }
@@ -67,5 +74,5 @@ const styles = StyleSheet.create({
   },
   backgroundOpacity: {
     opacity: 0.15,
-  }
+  },
 });

@@ -1,16 +1,21 @@
 import { StyleSheet, Text, View, Image } from 'react-native'
 import React from 'react';
 import Colors from '../constans/colors';
+import RoundedButton from '../UIElements/RoundedButton';
 
-const GameIsOver = () => {
+const GameIsOver = ({numberOfRounds, newGameHandler}) => {
   return (
     <View style={styles.container}>
       <View style={styles.textContainer}>
-         <Text style={styles.textStyles}>{`GAME IS OVER! \nTRY AGAIN`}</Text>
+         <Text style={styles.textStyles}>GAME IS OVER!</Text>
       </View>   
       <View style={styles.imageContainer}>
          <Image style={styles.imageStyles} source={require('../assets/goal-game-over.png')} />
       </View>
+      <View style={[styles.textContainer, styles.downTextContainer]}>
+        <Text style={[styles.textStyles, styles.downTextStyles]}>Number of rounds: {numberOfRounds}</Text>
+      </View>
+      <RoundedButton onPress={newGameHandler}>New Game</RoundedButton>
     </View>
   )
 }
@@ -25,7 +30,7 @@ const styles = StyleSheet.create({
     imageContainer:{
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 100,
+        marginVertical: 60,
     },
     imageStyles:{
         height: 250,
@@ -36,12 +41,17 @@ const styles = StyleSheet.create({
     textContainer:{
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 100,
+        marginTop: 70,
         padding: 12,
-        borderWidth: 4,
+        borderWidth: 2,
         borderRadius: 20,
         borderColor: 'white',
         overflow: 'hidden',
+    },
+    downTextContainer:{
+        marginTop: 0,
+        marginBottom: 40,
+        borderWidth: 2,
     },
     textStyles:{
         fontSize: 32,
@@ -49,5 +59,8 @@ const styles = StyleSheet.create({
         color: 'white',
         textAlign: 'center',
         
+    },
+    downTextStyles:{
+        fontSize: 24,
     }
 })

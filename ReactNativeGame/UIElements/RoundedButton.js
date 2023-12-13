@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     innerContainer:{
         backgroundColor:'#52073c',
         paddingVertical: 16,
-        paddingHorizontal: 24,
+        paddingHorizontal: 20,
         elevation: 2,
     },
     textStyles:{
